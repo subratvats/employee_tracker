@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+
 <title>List employee</title>
 <link type="text/css" rel="stylesheet" href="css/style.css">
 </head>
@@ -31,14 +31,27 @@
 					<th>Email</th>
 					<th>Action</th>
 				</tr>
-				<c:forEach var="tempStudents" items="${EMPLOYEE_LIST}">
+				<c:forEach var="tempEmployee" items="${EMPLOYEE_LIST}">
+				
+					<!-- Set up a link for each student -->
+					
+				<c:url var="loadLink" value="EmployeeControllerServlet">
+					<c:param name="command" value="LOAD"></c:param>
+					<c:param name="employeeId" value="${tempEmployee.id}"></c:param>
+				</c:url>
+				
+				<c:url var="deleteLink" value="EmployeeControllerServlet">
+					<c:param name="command" value="DELETE"></c:param>
+					<c:param name="employeeId" value="${tempEmployee.id}"></c:param>
+				</c:url>
+				
 					<tbody>
-						<td>${tempStudents.firstName }</td>
-						<td>${tempStudents.getLastName() }</td>
-						<td>${tempStudents.getEmail()}</td>
-						<td><a href="">update</a>
+						<td>${tempEmployee.firstName }</td>
+						<td>${tempEmployee.getLastName() }</td>
+						<td>${tempEmployee.getEmail()}</td>
+						<td><a href="${loadLink }">update</a>
 						|
-						<a href="">delete</a>
+						<a href="${deleteLink }" onclick="if (!(confirm('Are you sure you want to delete this student?'))) return false">delete</a>
 						</td>
 					</tbody>
 	

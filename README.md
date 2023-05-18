@@ -26,4 +26,10 @@ employee.java <br> employeeDbUtil.java : for jdbc work<br> controllerservlet : n
 create html form for add employee<br>
 handle requsest to add employee in servlet<br>
 update db util
-<li></li>
+<li><b>update employee</b><br>
+update list-employee.jsp<br>
+create new jsp file update_employee.jsp form if click update it should load <br>
+servlet - Handle request to update employee <br>
+update dbutil
+
+</li>

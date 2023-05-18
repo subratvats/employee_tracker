@@ -20,7 +20,7 @@ public class EmployeeDbUtil {
 		this.datasource = datasource;
 	}
 	
-	public List<Employee> getEmployee() throws Exception{
+	public List<Employee> getEmployees() throws Exception{
 		
 		List<Employee> employees =new ArrayList<>();
 		//test	
@@ -80,6 +80,94 @@ public class EmployeeDbUtil {
 		
 		 stm.close();
 		 con.close();
+	}
+
+	public Employee getEmployee(String theEmployeeId) { // its singular and diff method 
+		
+		Employee eachEmployee =null;
+		Connection con = null;
+		PreparedStatement stm=null;
+		ResultSet rst=null;
+		int employeeId;
+		try {
+			employeeId = Integer.parseInt(theEmployeeId);
+			//get connection to db
+			con = datasource.getConnection();
+			String sql="select * from employee where id=?";
+			
+			stm=con.prepareStatement(sql);
+			
+			stm.setInt(1, employeeId);
+			
+			rst=stm.executeQuery();
+			 
+			if (rst.next()) {
+				 //rettrieve data from result set row
+				 
+					String firstName=rst.getString("first_name");
+					String lastName=rst.getString("last_name");
+					String email=rst.getString("email");
+					
+					eachEmployee = new Employee(employeeId, firstName, lastName, email);
+			}
+			else {
+				throw new Exception("could not find studentId: "+ employeeId);
+			}
+			 rst.close();
+			 stm.close();
+			 con.close();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+		return eachEmployee;
+	}
+
+	public void updateEmployee(Employee theEmployee) {
+		Connection con = null;
+		PreparedStatement stm=null;
+		try {
+			con = datasource.getConnection();
+			
+			String sql = "update employee " + "set first_name=?, last_name=?, email=? " + "where id=?";
+			
+			stm=con.prepareStatement(sql);
+			
+			 stm.setString(1, theEmployee.getFirstName());
+			 stm.setString(2, theEmployee.getLastName());
+			 stm.setString(3, theEmployee.getEmail());
+			 stm.setInt(4, theEmployee.getId());
+			 
+			 stm.execute();
+			 
+			 stm.close();
+			 con.close();
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+	}
+
+	public void deleteEmployee(String theEmployeeId) throws Exception{
+		
+		Connection con=null;
+		PreparedStatement stm=null;
+		
+		int employeeId;
+		employeeId= Integer.parseInt(theEmployeeId);
+		
+		con=datasource.getConnection();
+		
+		String sql="delete from employee where id=?";
+		stm=con.prepareStatement(sql);
+		stm.setInt(1, employeeId);
+		stm.execute();
+		
+		stm.close();
+		con.close();
+		
 	}
 
 	

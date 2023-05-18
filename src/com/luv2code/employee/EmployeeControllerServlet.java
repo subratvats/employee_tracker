@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import com.luv2code.employee.*;
+import com.luv2code.employee.*;
 
 //import com.luv2code.employee.Employee;
 
@@ -62,7 +63,13 @@ public class EmployeeControllerServlet extends HttpServlet {
 				listEmployee(request, response);
 				break;
 				
-				
+			case "LOAD":
+                loadEmployee(request, response);
+                break;
+			
+			case "DELETE":
+                deleteEmployee(request, response);
+                break;
 			default:
 				listEmployee(request, response);
 			}
@@ -74,6 +81,9 @@ public class EmployeeControllerServlet extends HttpServlet {
 		
 	}
 	
+
+
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		try {
@@ -85,6 +95,10 @@ public class EmployeeControllerServlet extends HttpServlet {
                             
             case "ADD":
                 addEmployee(request, response);
+                break;
+                
+            case "UPDATE":
+                updateEmployee(request, response);
                 break;
                                 
             default:
@@ -99,9 +113,15 @@ public class EmployeeControllerServlet extends HttpServlet {
 
 
 
+
+
+
+
+
+
 	private void listEmployee(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
-		List<Employee> employees= employeeDbUtil.getEmployee();
+		List<Employee> employees= employeeDbUtil.getEmployees();
 		
 		request.setAttribute("EMPLOYEE_LIST", employees);
 		
@@ -138,6 +158,47 @@ public class EmployeeControllerServlet extends HttpServlet {
 				// SEND AS REDIRECT to avoid multiple-browser reload 
 				response.sendRedirect(request.getContextPath() + "/EmployeeControllerServlet");
 			}
+	
+	
+	private void loadEmployee(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		//read student into formm data
+		String theEmployeeId = request.getParameter("employeeId");
+		//get employee from database
+		Employee eachEmployee= employeeDbUtil.getEmployee(theEmployeeId);
+		//set attribute
+		request.setAttribute("THE_EMPLOYEE", eachEmployee);
+		
+		//send to jsp page
+		
+		RequestDispatcher dispatcher=request.getRequestDispatcher("/update-employee-form.jsp");
+		dispatcher.forward(request, response);
 	}
+	
+	
+	private void updateEmployee(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		
+		int id = Integer.parseInt(request.getParameter("employeeId"));// this parameter from update employee form.jsp
+		String firstName = request.getParameter("fName");
+		String lastName = request.getParameter("lName");
+		String email = request.getParameter("email");
+		
+		Employee theEmployee = new Employee(id, firstName, lastName, email);
+		employeeDbUtil.updateEmployee(theEmployee);
+		
+		response.sendRedirect(request.getContextPath() + "/EmployeeControllerServlet");
+	}
+
+	
+	private void deleteEmployee(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		String theEmployeeId = request.getParameter("employeeId");
+		employeeDbUtil.deleteEmployee(theEmployeeId);
+		
+		listEmployee(request,response);
+		
+	}
+}
 
 
